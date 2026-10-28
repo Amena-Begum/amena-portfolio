@@ -1,26 +1,183 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cream: #f7f1e8;
+  --color-paper: #fffcf7;
+  --color-sand: #ecdfcc;
+  --color-ink: #1e1b18;
+  --color-muted: #6f665d;
+  --color-line: #e3d7c6;
+  --color-terra: #c2552d;
+  --color-terra-dark: #9e4020;
+  --color-teal: #1f5560;
+  --font-sans: var(--font-manrope);
+  --font-serif: var(--font-fraunces);
+  --font-mono: var(--font-jetbrains);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-padding-top: 5.5rem;
+}
+
+html,
+body {
+  overflow-x: clip;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-ink);
+}
+
+::selection {
+  background: var(--color-terra);
+  color: var(--color-paper);
+}
+
+/* ---------- First-paint animations (pure CSS, no JavaScript needed) ---------- */
+
+/* A line of text rises from behind its own mask. Wrap the text in .mask > .rise */
+.mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(105%) skewY(4deg);
+  }
+}
+
+.rise {
+  display: block;
+  animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.fade-up {
+  animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Arch-shaped photo frame that opens from the bottom up. */
+.arch {
+  border-radius: 999px 999px 28px 28px;
+}
+
+@keyframes arch-open {
+  from {
+    clip-path: inset(100% 0 0 0 round 999px 999px 28px 28px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 999px 999px 28px 28px);
+  }
+}
+
+.arch-open {
+  animation: arch-open 1.2s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
+}
+
+@keyframes zoom-out {
+  from {
+    transform: scale(1.25);
+  }
+}
+
+.zoom-out {
+  animation: zoom-out 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 22s linear infinite;
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.float {
+  animation: float 5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  animation: blink 1s steps(1) infinite;
+}
+
+/* ---------- Scroll-driven reveals (CSS scroll timelines; content simply shows where unsupported) ---------- */
+@supports (animation-timeline: view()) {
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(40px) scale(0.98);
+      filter: blur(6px);
+    }
+  }
+
+  .reveal {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 70%;
+  }
+
+  /* Hand-drawn underline under section titles draws itself as it scrolls in. */
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+
+  .draw path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    animation: draw linear both;
+    animation-timeline: view();
+    animation-range: entry 40% cover 45%;
+  }
+
+  @keyframes wipe {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+  }
+
+  .wipe {
+    animation: wipe linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 35%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .fade-up,
+  .arch-open,
+  .zoom-out,
+  .spin-slow,
+  .float,
+  .caret,
+  .reveal,
+  .draw path,
+  .wipe {
+    animation: none !important;
+  }
 }
